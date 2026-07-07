@@ -57,6 +57,14 @@ const CANDIDATES = [
   { name: "김밥", emoji: "🍙" }, { name: "파스타", emoji: "🍝" },
   { name: "회", emoji: "🐟" }, { name: "보쌈", emoji: "🥬" },
   { name: "치즈볼", emoji: "🧀" }, { name: "핫도그", emoji: "🌭" },
+  { name: "만두", emoji: "🥟" }, { name: "탕수육", emoji: "🍤" },
+  { name: "짜장면", emoji: "🍜" }, { name: "짬뽕", emoji: "🍲" },
+  { name: "순대", emoji: "🌭" }, { name: "어묵", emoji: "🍢" },
+  { name: "닭갈비", emoji: "🍗" }, { name: "감자튀김", emoji: "🍟" },
+  { name: "타코", emoji: "🌮" }, { name: "카레", emoji: "🍛" },
+  { name: "우동", emoji: "🍜" }, { name: "스테이크", emoji: "🥩" },
+  { name: "김치찌개", emoji: "🍲" }, { name: "라볶이", emoji: "🌶️" },
+  { name: "편의점 도시락", emoji: "🍱" }, { name: "부리토", emoji: "🌯" },
 ];
 
 let round, next, idx;
@@ -70,7 +78,8 @@ function shuffle(a) {
 }
 
 function roundName(n) {
-  if (n >= 16) return "16강";
+  if (n >= 32) return "32강";
+  if (n === 16) return "16강";
   if (n === 8) return "8강";
   if (n === 4) return "4강";
   if (n === 2) return "결승";

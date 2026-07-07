@@ -54,6 +54,9 @@ const CANDIDATES = [
   { name: "안동찜닭", emoji: "🍗", era: "2000년대" },
   { name: "불닭", emoji: "🌶️", era: "2000년대" },
   { name: "크리스피크림", emoji: "🍩", era: "2000년대" },
+  { name: "붕어싸만코", emoji: "🐟", era: "2000년대" },
+  { name: "죠스바", emoji: "🧊", era: "2000년대" },
+  { name: "딸기 셰이크", emoji: "🍓", era: "2000년대" },
   { name: "벌집 아이스크림", emoji: "🍦", era: "2010년대" },
   { name: "허니버터칩", emoji: "🥔", era: "2010년대" },
   { name: "슈니발렌", emoji: "🔨", era: "2010년대" },
@@ -61,12 +64,25 @@ const CANDIDATES = [
   { name: "대왕 카스테라", emoji: "🍰", era: "2010년대" },
   { name: "흑당 버블티", emoji: "🧋", era: "2010년대" },
   { name: "뚱카롱", emoji: "🌈", era: "2010년대" },
+  { name: "로제떡볶이", emoji: "🌶️", era: "2010년대" },
+  { name: "마약옥수수", emoji: "🌽", era: "2010년대" },
+  { name: "설빙 팥빙수", emoji: "🍧", era: "2010년대" },
+  { name: "츄러스", emoji: "🥨", era: "2010년대" },
+  { name: "대만 지파이", emoji: "🍗", era: "2010년대" },
+  { name: "회오리감자", emoji: "🌀", era: "2010년대" },
   { name: "탕후루", emoji: "🍡", era: "2020년대" },
   { name: "두바이 초콜릿", emoji: "🍫", era: "2020년대" },
   { name: "요아정", emoji: "🍦", era: "2020년대" },
   { name: "마라탕", emoji: "🍲", era: "2020년대" },
   { name: "크로플", emoji: "🧇", era: "2020년대" },
   { name: "약과", emoji: "🍪", era: "2020년대" },
+  { name: "밤 티라미수", emoji: "🌰", era: "2020년대" },
+  { name: "크루키", emoji: "🥐", era: "2020년대" },
+  { name: "먹태깡", emoji: "🥔", era: "2020년대" },
+  { name: "뿌링클", emoji: "🍗", era: "2020년대" },
+  { name: "소금빵", emoji: "🥖", era: "2020년대" },
+  { name: "로투스 쿠키", emoji: "🍪", era: "2020년대" },
+  { name: "딸기 모찌", emoji: "🍡", era: "2020년대" },
 ];
 
 let round, next, idx;
@@ -80,7 +96,8 @@ function shuffle(a) {
 }
 
 function roundName(n) {
-  if (n >= 16) return "16강";
+  if (n >= 32) return "32강";
+  if (n === 16) return "16강";
   if (n === 8) return "8강";
   if (n === 4) return "4강";
   if (n === 2) return "결승";
