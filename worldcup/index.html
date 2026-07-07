@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>야식 이상형 월드컵 | 최고의 야식은?</title>
+  <meta name="description" content="치킨 vs 피자 vs 족발... 최고의 야식을 뽑는 이상형 월드컵. 16강 토너먼트로 나만의 1위를 정해보세요." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.5; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; text-align: center; }
+    .round { text-align: center; color: #4a7cff; font-weight: 700; font-size: 16px; margin: 8px 0 16px; }
+    .vs { text-align: center; color: #bbb; font-weight: 800; margin: 10px 0; font-size: 18px; }
+    .pick {
+      background: #fff; border-radius: 16px; padding: 32px 16px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06); cursor: pointer; transition: transform .08s;
+    }
+    .pick:active { transform: scale(.97); }
+    .pick .emoji { font-size: 64px; }
+    .pick .name { font-size: 22px; font-weight: 700; margin-top: 8px; }
+    .champion { background: #fff; border-radius: 16px; padding: 40px 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .champion .crown { font-size: 40px; }
+    .champion .emoji { font-size: 80px; margin: 8px 0; }
+    .champion .name { font-size: 28px; font-weight: 800; }
+    .champion .label { color: #888; margin-top: 6px; }
+    button { width: 100%; padding: 14px; margin-top: 12px; font-size: 16px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button.share { background: #22a06b; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>🍗 야식 이상형 월드컵</h1>
+    <div class="round" id="round"></div>
+
+    <!-- 카카오 애드핏 광고 -->
+    <div style="text-align:center;margin:0 0 16px">
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-tmpthnakjXKM6v71"
+           data-ad-width="320"
+           data-ad-height="100"></ins>
+      <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+    </div>
+
+    <div id="game"></div>
+  </div>
+
+<script>
+const CANDIDATES = [
+  { name: "치킨", emoji: "🍗" }, { name: "피자", emoji: "🍕" },
+  { name: "족발", emoji: "🐖" }, { name: "떡볶이", emoji: "🌶️" },
+  { name: "라면", emoji: "🍜" }, { name: "햄버거", emoji: "🍔" },
+  { name: "초밥", emoji: "🍣" }, { name: "삼겹살", emoji: "🥓" },
+  { name: "마라탕", emoji: "🍲" }, { name: "곱창", emoji: "🔥" },
+  { name: "김밥", emoji: "🍙" }, { name: "파스타", emoji: "🍝" },
+  { name: "회", emoji: "🐟" }, { name: "보쌈", emoji: "🥬" },
+  { name: "치즈볼", emoji: "🧀" }, { name: "핫도그", emoji: "🌭" },
+];
+
+let round, next, idx;
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function roundName(n) {
+  if (n >= 16) return "16강";
+  if (n === 8) return "8강";
+  if (n === 4) return "4강";
+  if (n === 2) return "결승";
+  return "";
+}
+
+function start() {
+  round = shuffle([...CANDIDATES]);
+  next = [];
+  idx = 0;
+  render();
+}
+
+function pick(winner) {
+  next.push(winner);
+  idx += 2;
+  if (idx >= round.length) {
+    round = next;
+    next = [];
+    idx = 0;
+  }
+  render();
+}
+
+function render() {
+  const game = document.getElementById("game");
+  const roundEl = document.getElementById("round");
+
+  // 우승 결정
+  if (round.length === 1) {
+    const c = round[0];
+    roundEl.textContent = "우승!";
+    game.innerHTML = `
+      <div class="champion">
+        <div class="crown">👑</div>
+        <div class="emoji">${c.emoji}</div>
+        <div class="name">${c.name}</div>
+        <div class="label">당신이 뽑은 최고의 야식</div>
+      </div>
+      <button onclick="start()">🔄 다시 하기</button>
+      <button class="share" onclick="share('${c.name}')">📤 결과 공유하기</button>
+    `;
+    return;
+  }
+
+  roundEl.textContent = `${roundName(round.length)} (${idx / 2 + 1} / ${round.length / 2})`;
+  const a = round[idx], b = round[idx + 1];
+  game.innerHTML = `
+    <div class="pick" onclick="pick(round[idx])">
+      <div class="emoji">${a.emoji}</div><div class="name">${a.name}</div>
+    </div>
+    <div class="vs">VS</div>
+    <div class="pick" onclick="pick(round[idx+1])">
+      <div class="emoji">${b.emoji}</div><div class="name">${b.name}</div>
+    </div>
+  `;
+}
+
+window.pick = pick;
+window.start = start;
+window.share = function (name) {
+  const text = `내 최애 야식은 "${name}"! 너도 해봐 👉`;
+  const url = location.href;
+  if (navigator.share) {
+    navigator.share({ title: "야식 이상형 월드컵", text, url });
+  } else {
+    navigator.clipboard.writeText(text + " " + url);
+    alert("결과 링크가 복사됐어요! 붙여넣기로 공유하세요.");
+  }
+};
+
+start();
+</script>
+</body>
+</html>
