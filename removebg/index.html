@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>무료 누끼따기 | 배경 제거 - 가입·워터마크 없음</title>
+  <meta name="description" content="사진 배경을 무료로 자동 제거. 가입 없이, 워터마크 없이, 브라우저에서 바로. 사진은 서버로 전송되지 않습니다." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    .drop {
+      border: 2px dashed #cbd3e0; border-radius: 12px; padding: 40px 16px;
+      text-align: center; color: #888; cursor: pointer; font-size: 15px;
+    }
+    .drop:hover { border-color: #4a7cff; color: #4a7cff; }
+    input[type=file] { display: none; }
+    button { width: 100%; padding: 14px; margin-top: 14px; font-size: 16px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:disabled { background: #b8c4e0; cursor: default; }
+    .status { text-align: center; font-size: 14px; color: #4a7cff; margin-top: 12px; min-height: 20px; }
+    /* 투명 배경 체크무늬 */
+    .preview { margin-top: 12px; text-align: center; }
+    .preview img { max-width: 100%; border-radius: 10px;
+      background-image:
+        linear-gradient(45deg,#eee 25%,transparent 25%),
+        linear-gradient(-45deg,#eee 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,#eee 75%),
+        linear-gradient(-45deg,transparent 75%,#eee 75%);
+      background-size: 20px 20px;
+      background-position: 0 0,0 10px,10px -10px,-10px 0;
+    }
+    a.dl { display:block; text-align:center; margin-top:12px; padding:13px; background:#22a06b; color:#fff; text-decoration:none; border-radius:10px; font-weight:700; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+    .privacy { font-size: 12px; color: #aaa; margin-top: 14px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>무료 누끼따기 (배경 제거)</h1>
+    <p class="sub">가입 없음 · 워터마크 없음 · 완전 무료</p>
+
+    <div class="card">
+      <label class="drop" id="drop">
+        📷 사진을 선택하거나 여기로 끌어다 놓기
+        <input type="file" id="file" accept="image/*" />
+      </label>
+      <button id="btn" onclick="run()" disabled>배경 제거하기</button>
+      <div class="status" id="status"></div>
+      <div class="preview" id="preview"></div>
+      <p class="privacy">🔒 사진은 서버로 전송되지 않고 브라우저 안에서만 처리됩니다.</p>
+    </div>
+  </div>
+
+<script type="module">
+  import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs";
+
+  const fileInput = document.getElementById("file");
+  const drop = document.getElementById("drop");
+  const btn = document.getElementById("btn");
+  const status = document.getElementById("status");
+  const preview = document.getElementById("preview");
+  let selectedFile = null;
+
+  fileInput.addEventListener("change", (e) => {
+    selectedFile = e.target.files[0] || null;
+    if (selectedFile) {
+      drop.textContent = "✅ " + selectedFile.name;
+      btn.disabled = false;
+      preview.innerHTML = "";
+    }
+  });
+
+  // 드래그 앤 드롭
+  drop.addEventListener("dragover", (e) => { e.preventDefault(); });
+  drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files[0]) {
+      selectedFile = e.dataTransfer.files[0];
+      drop.textContent = "✅ " + selectedFile.name;
+      btn.disabled = false;
+    }
+  });
+
+  window.run = async function () {
+    if (!selectedFile) return;
+    btn.disabled = true;
+    preview.innerHTML = "";
+    status.textContent = "처리 중... (처음엔 AI 모델 다운로드로 시간이 걸려요)";
+
+    try {
+      const blob = await removeBackground(selectedFile, {
+        progress: (key, current, total) => {
+          if (key.startsWith("fetch")) {
+            const pct = total ? Math.round((current / total) * 100) : 0;
+            status.textContent = `AI 모델 다운로드 중... ${pct}%`;
+          } else {
+            status.textContent = "배경 제거 중...";
+          }
+        },
+      });
+      const url = URL.createObjectURL(blob);
+      status.textContent = "완료! 👇 다운로드하세요";
+      preview.innerHTML =
+        `<img src="${url}" alt="배경 제거 결과" />` +
+        `<a class="dl" href="${url}" download="누끼_결과.png">PNG 다운로드</a>`;
+    } catch (err) {
+      status.textContent = "에러가 났어요: " + err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  };
+</script>
+</body>
+</html>
