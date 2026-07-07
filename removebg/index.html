@@ -65,7 +65,8 @@
   </div>
 
 <script type="module">
-  import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/index.mjs";
+  // 라이브러리는 run() 안에서 동적 로드 (실패해도 화면에 에러 표시하려고)
+  let removeBackground = null;
 
   const fileInput = document.getElementById("file");
   const drop = document.getElementById("drop");
@@ -98,6 +99,19 @@
     if (!selectedFile) return;
     btn.disabled = true;
     preview.innerHTML = "";
+
+    // 라이브러리 동적 로드 (esm.sh = 의존성 자동 번들). 실패 시 에러 표시.
+    if (!removeBackground) {
+      status.textContent = "AI 라이브러리 불러오는 중...";
+      try {
+        ({ removeBackground } = await import("https://esm.sh/@imgly/background-removal"));
+      } catch (e) {
+        status.textContent = "라이브러리 로드 실패: " + e.message;
+        btn.disabled = false;
+        return;
+      }
+    }
+
     status.textContent = "처리 중... (처음엔 AI 모델 다운로드로 시간이 걸려요)";
 
     try {
