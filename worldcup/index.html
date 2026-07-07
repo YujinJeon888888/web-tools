@@ -131,15 +131,26 @@ function render() {
 
 window.pick = pick;
 window.start = start;
-window.share = function (name) {
+window.share = async function (name) {
   const text = `내 최애 야식은 "${name}"! 너도 해봐 👉`;
   const url = location.href;
+  // 1) 네이티브 공유 (주로 모바일)
   if (navigator.share) {
-    navigator.share({ title: "야식 이상형 월드컵", text, url });
-  } else {
-    navigator.clipboard.writeText(text + " " + url);
-    alert("결과 링크가 복사됐어요! 붙여넣기로 공유하세요.");
+    try {
+      await navigator.share({ title: "야식 이상형 월드컵", text, url });
+      return;
+    } catch (e) {
+      if (e.name === "AbortError") return; // 사용자가 취소한 것 = 정상
+    }
   }
+  // 2) 클립보드 복사 (주로 PC)
+  try {
+    await navigator.clipboard.writeText(text + " " + url);
+    alert("결과 링크가 복사됐어요! 붙여넣기로 공유하세요.");
+    return;
+  } catch (e) {}
+  // 3) 최후: 링크 직접 표시
+  prompt("아래 링크를 복사해서 공유하세요:", text + " " + url);
 };
 
 start();
