@@ -3,208 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>연봉 실수령액 계산기 2025 | 4대보험·소득세 자동 계산</title>
-  <meta name="description" content="연봉만 입력하면 4대보험과 소득세를 빼고 월 실수령액을 바로 계산해드립니다. 2025년 기준, 부양가족·비과세 반영." />
+  <title>무료 계산기 모음 | 연봉·만나이·D-day 계산기</title>
+  <meta name="description" content="연봉 실수령액, 만나이, D-day를 한 곳에서. 가입 없이 무료로 바로 계산하세요." />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, "Malgun Gothic", sans-serif;
-      background: #f4f5f7;
-      color: #222;
-      line-height: 1.6;
-      padding: 16px;
+      background: #f4f5f7; color: #222; line-height: 1.6; padding: 24px 16px;
     }
     .wrap { max-width: 480px; margin: 0 auto; }
-    h1 { font-size: 22px; margin: 12px 0 4px; }
-    .sub { color: #888; font-size: 13px; margin-bottom: 20px; }
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-      margin-bottom: 16px;
+    h1 { font-size: 24px; margin-bottom: 6px; text-align: center; }
+    .sub { color: #888; font-size: 14px; text-align: center; margin-bottom: 24px; }
+    a.tool {
+      display: block; background: #fff; border-radius: 14px; padding: 20px;
+      margin-bottom: 14px; text-decoration: none; color: inherit;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: transform .1s;
     }
-    label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
-    label:first-child { margin-top: 0; }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-    input:focus, select:focus { outline: none; border-color: #4a7cff; }
-    .hint { font-size: 12px; color: #aaa; margin-top: 4px; }
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
-      background: #4a7cff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:active { background: #3a6cee; }
-    .result { display: none; }
-    .big {
-      text-align: center;
-      padding: 8px 0 16px;
-    }
-    .big .label { font-size: 14px; color: #888; }
-    .big .amount { font-size: 34px; font-weight: 800; color: #4a7cff; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    td { padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
-    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
-    .total td { font-weight: 700; border-bottom: none; padding-top: 12px; }
-    .minus td:last-child { color: #e05252; }
-    .note { font-size: 12px; color: #aaa; margin-top: 14px; }
+    a.tool:active { transform: scale(.98); }
+    .tool .emoji { font-size: 28px; }
+    .tool .name { font-size: 18px; font-weight: 700; margin-top: 6px; }
+    .tool .desc { font-size: 13px; color: #999; margin-top: 2px; }
+    footer { text-align: center; color: #bbb; font-size: 12px; margin-top: 24px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>연봉 실수령액 계산기</h1>
-    <p class="sub">2025년 기준 · 4대보험 + 소득세 자동 계산</p>
+    <h1>무료 계산기 모음</h1>
+    <p class="sub">가입 없이 · 바로 계산 · 무료</p>
 
-    <!-- 광고 자리 (애드센스 승인 후 코드 삽입) -->
-    <!-- <div class="ad-slot"></div> -->
+    <a class="tool" href="salary/">
+      <div class="emoji">💰</div>
+      <div class="name">연봉 실수령액 계산기</div>
+      <div class="desc">연봉에서 4대보험·소득세 빼고 월 실수령액</div>
+    </a>
 
-    <div class="card">
-      <label>연봉 (세전)</label>
-      <input id="salary" type="number" inputmode="numeric" placeholder="예: 4000" />
-      <div class="hint">단위: 만원 (4000 = 4,000만원)</div>
+    <a class="tool" href="age/">
+      <div class="emoji">🎂</div>
+      <div class="name">만나이 계산기</div>
+      <div class="desc">생년월일로 만나이·연나이 바로 확인</div>
+    </a>
 
-      <label>월 비과세액</label>
-      <input id="nontax" type="number" inputmode="numeric" value="20" />
-      <div class="hint">식대 등. 단위: 만원 (기본 20만원)</div>
+    <a class="tool" href="dday/">
+      <div class="emoji">📅</div>
+      <div class="name">D-day 계산기</div>
+      <div class="desc">목표 날짜까지 며칠 남았는지</div>
+    </a>
 
-      <label>부양가족 수 (본인 포함)</label>
-      <input id="family" type="number" inputmode="numeric" value="1" />
-      <div class="hint">본인만 있으면 1</div>
-
-      <button onclick="calc()">실수령액 계산</button>
-    </div>
-
-    <div class="card result" id="result">
-      <div class="big">
-        <div class="label">월 실수령액</div>
-        <div class="amount" id="netMonthly">-</div>
-      </div>
-      <table>
-        <tr><td>세전 월급</td><td id="gross">-</td></tr>
-        <tr class="minus"><td>국민연금</td><td id="pension">-</td></tr>
-        <tr class="minus"><td>건강보험</td><td id="health">-</td></tr>
-        <tr class="minus"><td>장기요양보험</td><td id="care">-</td></tr>
-        <tr class="minus"><td>고용보험</td><td id="employ">-</td></tr>
-        <tr class="minus"><td>소득세</td><td id="incometax">-</td></tr>
-        <tr class="minus"><td>지방소득세</td><td id="localtax">-</td></tr>
-        <tr class="total minus"><td>공제 합계</td><td id="totalDeduct">-</td></tr>
-        <tr class="total"><td>연 실수령액</td><td id="netYearly">-</td></tr>
-      </table>
-      <p class="note">※ 소득세는 국세청 간이세액표를 단순화한 추정치입니다. 실제 원천징수액과 다소 차이날 수 있습니다.</p>
-    </div>
+    <footer>© 무료 계산기 모음</footer>
   </div>
-
-<script>
-// ===== 2025년 기준 요율/상수 (매년 갱신 필요) =====
-const RATE = {
-  국민연금: 0.045,      // 근로자 부담분
-  건강보험: 0.03545,    // 근로자 부담분 (총 7.09%의 절반)
-  장기요양: 0.1295,     // 건강보험료 기준
-  고용보험: 0.009,      // 근로자 부담분
-};
-const 연금상한_월 = 6170000;   // 국민연금 기준소득월액 상한
-const 연금하한_월 = 390000;    // 하한
-const 인적공제_1인 = 1500000;  // 부양가족 1인당 연 공제
-
-// 근로소득공제 (연)
-function 근로소득공제(총급여) {
-  let d;
-  if (총급여 <= 5000000) d = 총급여 * 0.7;
-  else if (총급여 <= 15000000) d = 3500000 + (총급여 - 5000000) * 0.4;
-  else if (총급여 <= 45000000) d = 7500000 + (총급여 - 15000000) * 0.15;
-  else if (총급여 <= 100000000) d = 12000000 + (총급여 - 45000000) * 0.05;
-  else d = 14750000 + (총급여 - 100000000) * 0.02;
-  return Math.min(d, 20000000);
-}
-
-// 종합소득세 산출세액 (과세표준 기준)
-function 산출세액(과표) {
-  const 구간 = [
-    [14000000, 0.06, 0],
-    [50000000, 0.15, 1260000],
-    [88000000, 0.24, 5760000],
-    [150000000, 0.35, 15440000],
-    [300000000, 0.38, 19940000],
-    [500000000, 0.40, 25940000],
-    [1000000000, 0.42, 35940000],
-    [Infinity, 0.45, 65940000],
-  ];
-  for (const [상한, 세율, 누진공제] of 구간) {
-    if (과표 <= 상한) return Math.max(0, 과표 * 세율 - 누진공제);
-  }
-}
-
-// 근로소득 세액공제
-function 근로세액공제(산출, 총급여) {
-  let credit = 산출 <= 1300000 ? 산출 * 0.55 : 715000 + (산출 - 1300000) * 0.30;
-  let 한도;
-  if (총급여 <= 33000000) 한도 = 740000;
-  else if (총급여 <= 70000000) 한도 = Math.max(660000, 740000 - (총급여 - 33000000) * 0.008);
-  else if (총급여 <= 120000000) 한도 = Math.max(500000, 660000 - (총급여 - 70000000) * 0.5);
-  else 한도 = Math.max(200000, 500000 - (총급여 - 120000000) * 0.5);
-  return Math.min(credit, 한도);
-}
-
-const won = (n) => Math.round(n).toLocaleString("ko-KR") + "원";
-
-function calc() {
-  const 연봉 = (parseFloat(document.getElementById("salary").value) || 0) * 10000;
-  const 비과세월 = (parseFloat(document.getElementById("nontax").value) || 0) * 10000;
-  const 부양가족 = Math.max(1, parseInt(document.getElementById("family").value) || 1);
-
-  if (연봉 <= 0) { alert("연봉을 입력해주세요."); return; }
-
-  const 총월급 = 연봉 / 12;
-  const 과세연봉 = Math.max(0, 연봉 - 비과세월 * 12); // 총급여
-  const 과세월급 = 과세연봉 / 12;
-
-  // 4대보험 (월, 과세소득 기준)
-  const 연금기준 = Math.min(Math.max(과세월급, 연금하한_월), 연금상한_월);
-  const 국민연금 = Math.floor(연금기준 * RATE.국민연금);
-  const 건강보험 = Math.floor(과세월급 * RATE.건강보험);
-  const 장기요양 = Math.floor(건강보험 * RATE.장기요양);
-  const 고용보험 = Math.floor(과세월급 * RATE.고용보험);
-
-  // 소득세 (연 → 월)
-  const 사회보험료_연 = (국민연금 + 건강보험 + 장기요양 + 고용보험) * 12;
-  const 과세표준 = Math.max(0,
-    과세연봉 - 근로소득공제(과세연봉) - 인적공제_1인 * 부양가족 - 사회보험료_연
-  );
-  const 산출 = 산출세액(과세표준);
-  const 결정세액 = Math.max(0, 산출 - 근로세액공제(산출, 과세연봉));
-  const 소득세 = Math.floor(결정세액 / 12 / 10) * 10;
-  const 지방소득세 = Math.floor(소득세 * 0.1 / 10) * 10;
-
-  const 공제합 = 국민연금 + 건강보험 + 장기요양 + 고용보험 + 소득세 + 지방소득세;
-  const 월실수령 = 총월급 - 공제합;
-
-  // 출력
-  document.getElementById("netMonthly").textContent = won(월실수령);
-  document.getElementById("gross").textContent = won(총월급);
-  document.getElementById("pension").textContent = "-" + won(국민연금);
-  document.getElementById("health").textContent = "-" + won(건강보험);
-  document.getElementById("care").textContent = "-" + won(장기요양);
-  document.getElementById("employ").textContent = "-" + won(고용보험);
-  document.getElementById("incometax").textContent = "-" + won(소득세);
-  document.getElementById("localtax").textContent = "-" + won(지방소득세);
-  document.getElementById("totalDeduct").textContent = "-" + won(공제합);
-  document.getElementById("netYearly").textContent = won(월실수령 * 12);
-
-  document.getElementById("result").style.display = "block";
-}
-</script>
 </body>
 </html>

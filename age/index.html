@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>만나이 계산기 | 생년월일로 만나이·연나이 계산</title>
+  <meta name="description" content="생년월일만 입력하면 만나이와 연나이를 바로 계산합니다. 2023년 만나이 통일법 기준." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    input:focus { outline: none; border-color: #4a7cff; }
+    button { width: 100%; padding: 15px; margin-top: 20px; font-size: 17px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:active { background: #3a6cee; }
+    .result { display: none; text-align: center; }
+    .result .big { font-size: 40px; font-weight: 800; color: #4a7cff; }
+    .result .big small { font-size: 18px; color: #222; font-weight: 600; }
+    .result .line { font-size: 15px; color: #666; margin-top: 8px; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>만나이 계산기</h1>
+    <p class="sub">2023년 만나이 통일법 기준</p>
+
+    <div class="card">
+      <label>생년월일</label>
+      <input id="birth" type="date" />
+      <button onclick="calc()">만나이 계산</button>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="big"><span id="manAge">-</span><small>세 (만나이)</small></div>
+      <div class="line" id="yearAge">-</div>
+      <div class="line" id="days">-</div>
+    </div>
+  </div>
+
+<script>
+function calc() {
+  const v = document.getElementById("birth").value;
+  if (!v) { alert("생년월일을 선택해주세요."); return; }
+  const b = new Date(v);
+  const today = new Date();
+
+  // 만나이: 올해 - 태어난해, 생일 안 지났으면 -1
+  let man = today.getFullYear() - b.getFullYear();
+  const 생일지남 =
+    today.getMonth() > b.getMonth() ||
+    (today.getMonth() === b.getMonth() && today.getDate() >= b.getDate());
+  if (!생일지남) man -= 1;
+
+  // 연나이: 올해 - 태어난해
+  const 연나이 = today.getFullYear() - b.getFullYear();
+
+  // 태어난 지 며칠
+  const 일수 = Math.floor((today - b) / (1000 * 60 * 60 * 24));
+
+  document.getElementById("manAge").textContent = man;
+  document.getElementById("yearAge").textContent = "연나이 " + 연나이 + "세";
+  document.getElementById("days").textContent = "태어난 지 " + 일수.toLocaleString("ko-KR") + "일";
+  document.getElementById("result").style.display = "block";
+}
+</script>
+</body>
+</html>

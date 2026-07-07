@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-day 계산기 | 목표 날짜까지 며칠 남았나</title>
+  <meta name="description" content="목표 날짜를 선택하면 D-day가 며칠 남았는지 바로 계산합니다. 시험·기념일·마감일 카운트다운." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    input:focus { outline: none; border-color: #4a7cff; }
+    button { width: 100%; padding: 15px; margin-top: 20px; font-size: 17px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:active { background: #3a6cee; }
+    .result { display: none; text-align: center; }
+    .result .big { font-size: 44px; font-weight: 800; color: #4a7cff; }
+    .result .line { font-size: 15px; color: #666; margin-top: 8px; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>D-day 계산기</h1>
+    <p class="sub">목표 날짜까지 며칠 남았는지 계산</p>
+
+    <div class="card">
+      <label>목표 날짜</label>
+      <input id="target" type="date" />
+      <button onclick="calc()">D-day 계산</button>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="big" id="dday">-</div>
+      <div class="line" id="detail">-</div>
+    </div>
+  </div>
+
+<script>
+function calc() {
+  const v = document.getElementById("target").value;
+  if (!v) { alert("목표 날짜를 선택해주세요."); return; }
+
+  // 시간 무시하고 날짜만 비교 (자정 기준)
+  const target = new Date(v);
+  const today = new Date();
+  const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const t1 = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+  const diff = Math.round((t1 - t0) / (1000 * 60 * 60 * 24));
+
+  const el = document.getElementById("dday");
+  const detail = document.getElementById("detail");
+
+  if (diff > 0) {
+    el.textContent = "D-" + diff;
+    detail.textContent = diff.toLocaleString("ko-KR") + "일 남았습니다";
+  } else if (diff < 0) {
+    el.textContent = "D+" + Math.abs(diff);
+    detail.textContent = Math.abs(diff).toLocaleString("ko-KR") + "일 지났습니다";
+  } else {
+    el.textContent = "D-DAY";
+    detail.textContent = "바로 오늘입니다! 🎉";
+  }
+  document.getElementById("result").style.display = "block";
+}
+</script>
+</body>
+</html>
