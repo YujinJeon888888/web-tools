@@ -155,8 +155,8 @@ window.start = start;
 window.share = async function (name) {
   const text = `내 최애 야식은 "${name}"! 너도 해봐 👉`;
   const url = location.href;
-  // 1) 네이티브 공유 (주로 모바일)
-  if (navigator.share) {
+  // 1) 네이티브 공유 (터치 기기 = 모바일에서만)
+  if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
     try {
       await navigator.share({ title: "야식 이상형 월드컵", text, url });
       return;

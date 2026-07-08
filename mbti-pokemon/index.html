@@ -152,7 +152,7 @@ window.restart = restart;
 window.share = async function (type, name) {
   const text = `내 포켓몬 MBTI는 ${type} "${name}"! 너도 해봐 👉`;
   const url = location.href;
-  if (navigator.share) {
+  if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
     try { await navigator.share({ title: "포켓몬 MBTI 테스트", text, url }); return; }
     catch (e) { if (e.name === "AbortError") return; }
   }
