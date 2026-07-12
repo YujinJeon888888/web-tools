@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한글 영타 변환기 | 영어로 친 한글 오타 변환 (dkssud→안녕)</title>
+  <meta name="description" content="키보드 안 바꾸고 영어로 친 글을 한글로, 한글을 영타로 변환. dkssud를 안녕으로 바꿔주는 오타 변환기." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="한글 ↔ 영타 변환기" />
+  <meta property="og:description" content="영어로 잘못 친 한글(dkssud)을 안녕으로. 양방향 오타 변환." />
+  <meta property="og:url" content="https://yujinjeon888888.github.io/web-tools/korean-typo/" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CJD94DVSKL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CJD94DVSKL');
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; text-align: center; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; text-align: center; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    textarea { width: 100%; height: 90px; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; resize: vertical; font-family: inherit; }
+    textarea:focus { outline: none; border-color: #4a7cff; }
+    .out { margin-top: 16px; }
+    .out .box { background: #f4f7ff; border-radius: 10px; padding: 14px; min-height: 52px; font-size: 17px; word-break: break-all; }
+    .out .row { display:flex; justify-content: space-between; align-items:center; margin-bottom:6px; }
+    .out .tag { font-size:13px; font-weight:700; color:#4a7cff; }
+    .copy { font-size:12px; color:#888; background:none; border:1px solid #ddd; border-radius:6px; padding:4px 10px; cursor:pointer; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+    section { color:#555; font-size:14px; line-height:1.75; }
+    section h2 { font-size:18px; color:#222; margin:24px 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>한글 ↔ 영타 변환기</h1>
+    <p class="sub">키보드 안 바꾸고 잘못 친 글 변환 (dkssud → 안녕)</p>
+
+    <!-- 카카오 애드핏 광고 -->
+    <div style="text-align:center;margin:0 0 16px">
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-tmpthnakjXKM6v71"
+           data-ad-width="320"
+           data-ad-height="100"></ins>
+      <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+    </div>
+
+    <div class="card">
+      <label>변환할 글</label>
+      <textarea id="input" placeholder="예: dkssudgktpdy 또는 안녕하세요"></textarea>
+
+      <div class="out">
+        <div class="row"><span class="tag">영타 → 한글</span><button class="copy" onclick="copy('outKor')">복사</button></div>
+        <div class="box" id="outKor"></div>
+      </div>
+      <div class="out">
+        <div class="row"><span class="tag">한글 → 영타</span><button class="copy" onclick="copy('outEng')">복사</button></div>
+        <div class="box" id="outEng"></div>
+      </div>
+    </div>
+
+    <section>
+      <h2>영타 변환기란?</h2>
+      <p>키보드를 한/영 전환 안 하고 그대로 쳤을 때 생기는 오타를 바로잡아 줍니다. 예를 들어 한글로 "안녕"을 치려다 영문 상태로 "dkssud"가 됐다면, 이걸 다시 "안녕"으로 변환합니다. 반대로 한글을 영타로도 바꿀 수 있습니다.</p>
+      <h2>이럴 때 써요</h2>
+      <p>카톡·메신저에서 영문으로 잘못 친 메시지 복구, 아이디·비밀번호 확인, 게임 채팅 오타 변환 등.</p>
+      <h2>자주 묻는 질문</h2>
+      <p><b>Q. 두벌식 기준인가요?</b><br>네, 표준 두벌식 키보드 배열 기준으로 변환합니다.</p>
+    </section>
+  </div>
+
+<script>
+  const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+  const JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+  // 두벌식: 영문 키 → 자모
+  const ENG2JAMO = {
+    q:'ㅂ',w:'ㅈ',e:'ㄷ',r:'ㄱ',t:'ㅅ',y:'ㅛ',u:'ㅕ',i:'ㅑ',o:'ㅐ',p:'ㅔ',
+    a:'ㅁ',s:'ㄴ',d:'ㅇ',f:'ㄹ',g:'ㅎ',h:'ㅗ',j:'ㅓ',k:'ㅏ',l:'ㅣ',
+    z:'ㅋ',x:'ㅌ',c:'ㅊ',v:'ㅍ',b:'ㅠ',n:'ㅜ',m:'ㅡ',
+    Q:'ㅃ',W:'ㅉ',E:'ㄸ',R:'ㄲ',T:'ㅆ',O:'ㅒ',P:'ㅖ'
+  };
+  const JAMO2ENG = {}; for (const k in ENG2JAMO) if (!(ENG2JAMO[k] in JAMO2ENG)) JAMO2ENG[ENG2JAMO[k]] = k;
+
+  // 복합 중성/종성 조합
+  const V_COMB = {'ㅗ':{'ㅏ':'ㅘ','ㅐ':'ㅙ','ㅣ':'ㅚ'},'ㅜ':{'ㅓ':'ㅝ','ㅔ':'ㅞ','ㅣ':'ㅟ'},'ㅡ':{'ㅣ':'ㅢ'}};
+  const J_COMB = {'ㄱ':{'ㅅ':'ㄳ'},'ㄴ':{'ㅈ':'ㄵ','ㅎ':'ㄶ'},'ㄹ':{'ㄱ':'ㄺ','ㅁ':'ㄻ','ㅂ':'ㄼ','ㅅ':'ㄽ','ㅌ':'ㄾ','ㅍ':'ㄿ','ㅎ':'ㅀ'},'ㅂ':{'ㅅ':'ㅄ'}};
+  // 분해 (복합 → 두 자모)
+  const V_SPLIT = {}, J_SPLIT = {};
+  for (const a in V_COMB) for (const b in V_COMB[a]) V_SPLIT[V_COMB[a][b]] = [a, b];
+  for (const a in J_COMB) for (const b in J_COMB[a]) J_SPLIT[J_COMB[a][b]] = [a, b];
+
+  const isJung = (j) => JUNG.indexOf(j) >= 0;
+
+  // 영타 → 한글 (자모 조합 자동기계)
+  function engToKor(str) {
+    let out = '';
+    let cho = -1, jung = -1, jong = -1;
+    function flush() {
+      if (cho >= 0 && jung >= 0) {
+        out += String.fromCharCode(0xAC00 + (cho * 21 + jung) * 28 + (jong < 0 ? 0 : jong));
+      } else {
+        if (cho >= 0) out += CHO[cho];
+        if (jung >= 0) out += JUNG[jung];
+        if (jong >= 0) out += JONG[jong];
+      }
+      cho = jung = jong = -1;
+    }
+    for (const ch of str) {
+      const j = ENG2JAMO[ch];
+      if (!j) { flush(); out += ch; continue; }
+      if (isJung(j)) {
+        const v = JUNG.indexOf(j);
+        if (jung < 0 && cho >= 0 && jong < 0) {           // 초성만 있음 → 중성
+          jung = v;
+        } else if (cho < 0 && jung < 0) {                 // 아무것도 없음 → 홀중성 시작
+          jung = v;
+        } else if (cho >= 0 && jung >= 0 && jong < 0) {   // 초+중 → 복합중성 시도
+            const comb = V_COMB[JUNG[jung]] && V_COMB[JUNG[jung]][j];
+            if (comb) jung = JUNG.indexOf(comb);
+            else { flush(); jung = v; }
+        } else if (jong >= 0) {                           // 초+중+종 + 모음 → 종성이 다음 글자 초성으로
+            const jc = JONG[jong];
+            if (J_SPLIT[jc]) {                            // 복합종성 분리
+              jong = JONG.indexOf(J_SPLIT[jc][0]);
+              flush();
+              cho = CHO.indexOf(J_SPLIT[jc][1]); jung = v;
+            } else {
+              jong = -1; flush();
+              cho = CHO.indexOf(jc); jung = v;
+            }
+        } else {                                          // 홀중성 상태 + 모음
+          flush(); jung = v;
+        }
+      } else {                                            // 자음
+        const asCho = CHO.indexOf(j);
+        const asJong = JONG.indexOf(j);
+        if (cho < 0 && jung < 0) {                         // 시작
+          cho = asCho;
+        } else if (cho >= 0 && jung < 0) {                 // 자음 두 개 연속
+          flush(); cho = asCho;
+        } else if (cho < 0 && jung >= 0) {                 // 홀중성 뒤 자음
+          flush(); cho = asCho;
+        } else if (jong < 0) {                             // 초+중 → 종성
+          if (asJong > 0) jong = asJong;
+          else { flush(); cho = asCho; }                   // ㄸㅃㅉ 등 종성 불가
+        } else {                                           // 초+중+종 + 자음 → 복합종성 시도
+          const comb = J_COMB[JONG[jong]] && J_COMB[JONG[jong]][j];
+          if (comb) jong = JONG.indexOf(comb);
+          else { flush(); cho = asCho; }
+        }
+      }
+    }
+    flush();
+    return out;
+  }
+
+  // 한글 → 영타
+  function jamoToEng(jamo) {
+    if (JAMO2ENG[jamo]) return JAMO2ENG[jamo];
+    if (V_SPLIT[jamo]) return JAMO2ENG[V_SPLIT[jamo][0]] + JAMO2ENG[V_SPLIT[jamo][1]];
+    if (J_SPLIT[jamo]) return JAMO2ENG[J_SPLIT[jamo][0]] + JAMO2ENG[J_SPLIT[jamo][1]];
+    return jamo;
+  }
+  function korToEng(str) {
+    let out = '';
+    for (const ch of str) {
+      const code = ch.charCodeAt(0);
+      if (code >= 0xAC00 && code <= 0xD7A3) {
+        const s = code - 0xAC00;
+        const cho = Math.floor(s / (21 * 28));
+        const jung = Math.floor((s % (21 * 28)) / 28);
+        const jong = s % 28;
+        out += jamoToEng(CHO[cho]) + jamoToEng(JUNG[jung]);
+        if (jong > 0) out += jamoToEng(JONG[jong]);
+      } else if (JAMO2ENG[ch] || V_SPLIT[ch] || J_SPLIT[ch]) {
+        out += jamoToEng(ch);
+      } else {
+        out += ch;
+      }
+    }
+    return out;
+  }
+
+  const input = document.getElementById("input");
+  function update() {
+    const t = input.value;
+    document.getElementById("outKor").textContent = engToKor(t);
+    document.getElementById("outEng").textContent = korToEng(t);
+  }
+  input.addEventListener("input", update);
+
+  window.copy = function (id) {
+    const txt = document.getElementById(id).textContent;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt).then(() => alert("복사됐어요!"));
+  };
+</script>
+</body>
+</html>
