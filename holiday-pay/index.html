@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주휴수당 계산기 | 시급·근무시간으로 주휴수당 계산</title>
+  <meta name="description" content="시급과 주 근무시간을 입력하면 주휴수당과 주휴 포함 주급을 계산해드립니다. 주 15시간 이상 알바 필수 확인." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="주휴수당 계산기" />
+  <meta property="og:description" content="시급·근무시간으로 주휴수당 자동 계산. 주 15시간 이상 알바 필수." />
+  <meta property="og:url" content="https://yujinjeon888888.github.io/web-tools/holiday-pay/" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CJD94DVSKL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CJD94DVSKL');
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; text-align: center; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; text-align: center; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+    label:first-child { margin-top: 0; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    input:focus { outline: none; border-color: #4a7cff; }
+    .hint { font-size: 12px; color: #aaa; margin-top: 4px; }
+    button { width: 100%; padding: 15px; margin-top: 20px; font-size: 17px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:active { background: #3a6cee; }
+    .result { display: none; }
+    .big { text-align: center; padding: 8px 0 16px; }
+    .big .label { font-size: 14px; color: #888; }
+    .big .amount { font-size: 32px; font-weight: 800; color: #4a7cff; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td { padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
+    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .total td { font-weight: 700; border-bottom: none; padding-top: 12px; }
+    .warn { color: #e05252; font-size: 13px; text-align: center; margin-top: 10px; display: none; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+    section { color:#555; font-size:14px; line-height:1.75; }
+    section h2 { font-size:18px; color:#222; margin:24px 0 8px; }
+    section ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>주휴수당 계산기</h1>
+    <p class="sub">시급·근무시간으로 주휴수당 자동 계산</p>
+
+    <!-- 카카오 애드핏 광고 -->
+    <div style="text-align:center;margin:0 0 16px">
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-tmpthnakjXKM6v71"
+           data-ad-width="320"
+           data-ad-height="100"></ins>
+      <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+    </div>
+
+    <div class="card">
+      <label>시급 (원)</label>
+      <input id="wage" type="number" inputmode="numeric" placeholder="예: 10030" />
+      <div class="hint">2025년 최저시급 10,030원</div>
+
+      <label>하루 근무시간</label>
+      <input id="hours" type="number" inputmode="decimal" placeholder="예: 8" />
+
+      <label>주 근무일수</label>
+      <input id="days" type="number" inputmode="numeric" placeholder="예: 5" />
+
+      <button onclick="calc()">주휴수당 계산</button>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="big">
+        <div class="label">주휴수당 (1주)</div>
+        <div class="amount" id="holidayPay">-</div>
+      </div>
+      <table>
+        <tr><td>주 근무시간</td><td id="weekHours">-</td></tr>
+        <tr><td>기본 주급</td><td id="basePay">-</td></tr>
+        <tr><td>주휴수당</td><td id="holidayRow">-</td></tr>
+        <tr class="total"><td>주휴 포함 주급</td><td id="totalWeek">-</td></tr>
+        <tr class="total"><td>월급 환산 (×4.345주)</td><td id="monthly">-</td></tr>
+      </table>
+      <p class="warn" id="warn">⚠️ 주 15시간 미만은 주휴수당 지급 대상이 아닙니다.</p>
+    </div>
+
+    <section>
+      <h2>주휴수당이란?</h2>
+      <p>1주일 동안 정해진 근무일을 개근하고, <b>주 15시간 이상</b> 일한 근로자에게 유급으로 지급하는 하루치 임금입니다. 알바·파트타임도 조건을 채우면 받을 수 있습니다.</p>
+      <h2>주휴수당 계산 방법</h2>
+      <ul>
+        <li>주휴시간 = (1주 근무시간 ÷ 40) × 8시간</li>
+        <li>주휴수당 = 주휴시간 × 시급</li>
+        <li>주 40시간 이상이면 주휴시간은 8시간으로 고정</li>
+      </ul>
+      <h2>자주 묻는 질문</h2>
+      <p><b>Q. 주 15시간 미만도 받나요?</b><br>아니요. 주 소정근로시간이 15시간 미만이면 주휴수당 대상이 아닙니다.</p>
+      <p><b>Q. 지각·결근하면요?</b><br>그 주에 개근하지 않으면 해당 주 주휴수당은 발생하지 않습니다.</p>
+    </section>
+  </div>
+
+<script>
+  const won = (n) => Math.round(n).toLocaleString("ko-KR") + "원";
+  function calc() {
+    const wage = parseFloat(document.getElementById("wage").value) || 0;
+    const hours = parseFloat(document.getElementById("hours").value) || 0;
+    const days = parseFloat(document.getElementById("days").value) || 0;
+    if (wage <= 0 || hours <= 0 || days <= 0) { alert("시급·근무시간·근무일수를 모두 입력해주세요."); return; }
+
+    const weekHours = hours * days;
+    const basePay = weekHours * wage;
+    // 주휴시간 = min(주근무시간, 40)/40 * 8, 주 15시간 이상만
+    const eligible = weekHours >= 15;
+    const holidayHours = eligible ? Math.min(weekHours, 40) / 40 * 8 : 0;
+    const holidayPay = holidayHours * wage;
+    const totalWeek = basePay + holidayPay;
+    const monthly = totalWeek * 4.345;
+
+    document.getElementById("holidayPay").textContent = won(holidayPay);
+    document.getElementById("weekHours").textContent = weekHours + "시간";
+    document.getElementById("basePay").textContent = won(basePay);
+    document.getElementById("holidayRow").textContent = won(holidayPay);
+    document.getElementById("totalWeek").textContent = won(totalWeek);
+    document.getElementById("monthly").textContent = won(monthly);
+    document.getElementById("warn").style.display = eligible ? "none" : "block";
+    document.getElementById("result").style.display = "block";
+  }
+</script>
+</body>
+</html>
