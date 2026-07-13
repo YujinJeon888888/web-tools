@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주식 평단가 계산기 | 물타기 평균단가 계산</title>
+  <meta name="description" content="보유 주식에 추가 매수(물타기)했을 때 평균단가를 바로 계산합니다. 수량과 단가만 입력하면 새 평단가·총매입금 자동 계산." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="주식 평단가 계산기 (물타기)" />
+  <meta property="og:description" content="추가 매수 시 평균단가를 자동 계산. 주식·코인 물타기 필수." />
+  <meta property="og:url" content="https://yujinjeon888888.github.io/web-tools/stock-average/" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CJD94DVSKL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CJD94DVSKL');
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; text-align: center; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; text-align: center; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    .group { font-size: 13px; font-weight: 700; color: #4a7cff; margin: 6px 0 8px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 12px 0 6px; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    input:focus { outline: none; border-color: #4a7cff; }
+    button { width: 100%; padding: 15px; margin-top: 20px; font-size: 17px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:active { background: #3a6cee; }
+    .result { display: none; }
+    .big { text-align: center; padding: 8px 0 16px; }
+    .big .label { font-size: 14px; color: #888; }
+    .big .amount { font-size: 30px; font-weight: 800; color: #4a7cff; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td { padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
+    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .total td { font-weight: 700; border-bottom: none; padding-top: 12px; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+    hr { border: none; border-top: 1px solid #f0f0f0; margin: 16px 0; }
+    section { color:#555; font-size:14px; line-height:1.75; }
+    section h2 { font-size:18px; color:#222; margin:24px 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>주식 평단가 계산기</h1>
+    <p class="sub">추가 매수(물타기) 시 평균단가 계산</p>
+
+    <!-- 카카오 애드핏 광고 -->
+    <div style="text-align:center;margin:0 0 16px">
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-tmpthnakjXKM6v71"
+           data-ad-width="320"
+           data-ad-height="100"></ins>
+      <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+    </div>
+
+    <div class="card">
+      <div class="group">기존 보유</div>
+      <label>보유 수량 (주)</label>
+      <input id="q1" type="number" inputmode="decimal" placeholder="예: 10" />
+      <label>평균 매입가 (원)</label>
+      <input id="p1" type="number" inputmode="decimal" placeholder="예: 50000" />
+      <hr />
+      <div class="group">추가 매수</div>
+      <label>추가 수량 (주)</label>
+      <input id="q2" type="number" inputmode="decimal" placeholder="예: 10" />
+      <label>매수가 (원)</label>
+      <input id="p2" type="number" inputmode="decimal" placeholder="예: 40000" />
+      <button onclick="calc()">평단가 계산</button>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="big">
+        <div class="label">새 평균단가</div>
+        <div class="amount" id="newAvg">-</div>
+      </div>
+      <table>
+        <tr><td>총 보유 수량</td><td id="totalQty">-</td></tr>
+        <tr><td>총 매입금액</td><td id="totalCost">-</td></tr>
+        <tr class="total"><td>평균단가 변화</td><td id="diff">-</td></tr>
+      </table>
+    </div>
+
+    <section>
+      <h2>평단가(평균단가)란?</h2>
+      <p>같은 종목을 여러 번 나눠 샀을 때, 1주당 평균 매입 가격입니다. 주가가 떨어졌을 때 추가로 사서 평균단가를 낮추는 것을 흔히 '물타기'라고 합니다.</p>
+      <h2>평단가 계산 방법</h2>
+      <p>새 평단가 = (기존수량×기존평단 + 추가수량×매수가) ÷ (기존수량 + 추가수량). 이 계산기가 자동으로 해드립니다.</p>
+      <h2>자주 묻는 질문</h2>
+      <p><b>Q. 코인도 되나요?</b><br>네, 주식·코인 모두 동일한 방식이라 그대로 쓰면 됩니다.</p>
+      <p><b>Q. 수수료·세금도 반영되나요?</b><br>이 계산기는 단순 평균단가만 계산하며 거래 수수료·세금은 포함하지 않습니다.</p>
+    </section>
+  </div>
+
+<script>
+  const won = (n) => Math.round(n).toLocaleString("ko-KR") + "원";
+  function calc() {
+    const q1 = parseFloat(document.getElementById("q1").value) || 0;
+    const p1 = parseFloat(document.getElementById("p1").value) || 0;
+    const q2 = parseFloat(document.getElementById("q2").value) || 0;
+    const p2 = parseFloat(document.getElementById("p2").value) || 0;
+    const totalQty = q1 + q2;
+    if (totalQty <= 0) { alert("수량과 단가를 입력해주세요."); return; }
+    const totalCost = q1 * p1 + q2 * p2;
+    const newAvg = totalCost / totalQty;
+    const diff = newAvg - p1;
+
+    document.getElementById("newAvg").textContent = won(newAvg);
+    document.getElementById("totalQty").textContent = totalQty.toLocaleString() + "주";
+    document.getElementById("totalCost").textContent = won(totalCost);
+    document.getElementById("diff").textContent =
+      (diff <= 0 ? "▼ " : "▲ ") + won(Math.abs(diff)) + (p1 ? " (" + (diff / p1 * 100).toFixed(1) + "%)" : "");
+    document.getElementById("diff").style.color = diff <= 0 ? "#2478ff" : "#e05252";
+    document.getElementById("result").style.display = "block";
+  }
+</script>
+</body>
+</html>
