@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퇴직금 계산기 | 예상 퇴직금 자동 계산</title>
+  <meta name="description" content="입사일·퇴사일과 월평균임금을 입력하면 예상 퇴직금을 자동 계산합니다. 재직일수·1일 평균임금 기준 2025년 계산." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="퇴직금 계산기" />
+  <meta property="og:description" content="입사일·퇴사일·월급으로 예상 퇴직금 자동 계산." />
+  <meta property="og:url" content="https://yujinjeon888888.github.io/web-tools/severance/" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CJD94DVSKL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CJD94DVSKL');
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; text-align: center; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; text-align: center; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+    label:first-child { margin-top: 0; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    input:focus { outline: none; border-color: #4a7cff; }
+    .hint { font-size: 12px; color: #aaa; margin-top: 4px; }
+    button { width: 100%; padding: 15px; margin-top: 20px; font-size: 17px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:active { background: #3a6cee; }
+    .result { display: none; }
+    .big { text-align: center; padding: 8px 0 16px; }
+    .big .label { font-size: 14px; color: #888; }
+    .big .amount { font-size: 30px; font-weight: 800; color: #4a7cff; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td { padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
+    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .total td { font-weight: 700; border-bottom: none; padding-top: 12px; }
+    .note { font-size: 12px; color: #aaa; margin-top: 14px; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+    section { color:#555; font-size:14px; line-height:1.75; }
+    section h2 { font-size:18px; color:#222; margin:24px 0 8px; }
+    section ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>퇴직금 계산기</h1>
+    <p class="sub">입사일·퇴사일·월급으로 예상 퇴직금</p>
+
+    <!-- 카카오 애드핏 광고 -->
+    <div style="text-align:center;margin:0 0 16px">
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-tmpthnakjXKM6v71"
+           data-ad-width="320"
+           data-ad-height="100"></ins>
+      <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+    </div>
+
+    <div class="card">
+      <label>입사일</label>
+      <input id="start" type="date" />
+      <label>퇴사일 (마지막 근무일 다음날)</label>
+      <input id="end" type="date" />
+      <label>월평균 세전 급여 (원)</label>
+      <input id="wage" type="number" inputmode="numeric" placeholder="예: 3000000" />
+      <div class="hint">퇴직 전 3개월 평균 월급 (세전)</div>
+      <button onclick="calc()">퇴직금 계산</button>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="big">
+        <div class="label">예상 퇴직금 (세전)</div>
+        <div class="amount" id="pay">-</div>
+      </div>
+      <table>
+        <tr><td>재직일수</td><td id="days">-</td></tr>
+        <tr><td>재직기간</td><td id="period">-</td></tr>
+        <tr class="total"><td>1일 평균임금</td><td id="daily">-</td></tr>
+      </table>
+      <p class="note">※ 2025년 기준 추정치입니다. 1일 평균임금은 실제 퇴직 전 3개월 임금총액 기준으로 산정되어 차이날 수 있습니다.</p>
+    </div>
+
+    <section>
+      <h2>퇴직금이란?</h2>
+      <p>1년 이상 계속 근무한 근로자가 퇴직할 때 받는 급여입니다. 주 15시간 이상 근무하고 1년 이상 재직했다면 정규직·계약직·알바 상관없이 받을 수 있습니다.</p>
+      <h2>퇴직금 계산 방법</h2>
+      <ul>
+        <li>퇴직금 = 1일 평균임금 × 30일 × (재직일수 ÷ 365)</li>
+        <li>1일 평균임금 = 퇴직 전 3개월 임금총액 ÷ 그 기간의 일수</li>
+        <li>대략 "월급 1개월치 × 근속연수" 수준입니다.</li>
+      </ul>
+      <h2>자주 묻는 질문</h2>
+      <p><b>Q. 1년 미만도 받나요?</b><br>아니요. 계속근로기간이 1년 미만이면 퇴직금 지급 대상이 아닙니다.</p>
+      <p><b>Q. 알바도 받나요?</b><br>주 15시간 이상, 1년 이상 근무하면 알바도 받을 수 있습니다.</p>
+    </section>
+  </div>
+
+<script>
+  const won = (n) => Math.round(n).toLocaleString("ko-KR") + "원";
+  function calc() {
+    const s = document.getElementById("start").value;
+    const e = document.getElementById("end").value;
+    const wage = parseFloat(document.getElementById("wage").value) || 0;
+    if (!s || !e || wage <= 0) { alert("입사일·퇴사일·월급을 모두 입력해주세요."); return; }
+    const start = new Date(s), end = new Date(e);
+    const days = Math.round((end - start) / 86400000);
+    if (days <= 0) { alert("퇴사일이 입사일보다 뒤여야 합니다."); return; }
+
+    const dailyWage = wage * 3 / 92;               // 1일 평균임금 (3개월≈92일 근사)
+    const pay = dailyWage * 30 * (days / 365);
+    const years = Math.floor(days / 365);
+    const months = Math.floor((days % 365) / 30);
+
+    document.getElementById("pay").textContent = won(pay);
+    document.getElementById("days").textContent = days.toLocaleString() + "일";
+    document.getElementById("period").textContent = years + "년 " + months + "개월";
+    document.getElementById("daily").textContent = won(dailyWage);
+    document.getElementById("result").style.display = "block";
+    if (days < 365) {
+      document.getElementById("pay").textContent = "지급 대상 아님";
+      document.getElementById("pay").style.fontSize = "22px";
+    } else {
+      document.getElementById("pay").style.fontSize = "30px";
+    }
+  }
+</script>
+</body>
+</html>

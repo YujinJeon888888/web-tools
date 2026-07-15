@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>연차수당 계산기 | 미사용 연차수당 자동 계산</title>
+  <meta name="description" content="월 통상임금과 미사용 연차일수를 입력하면 받을 수 있는 연차수당을 계산합니다. 1일 통상임금 기준 자동 계산." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="연차수당 계산기" />
+  <meta property="og:description" content="미사용 연차수당 자동 계산. 월급·연차일수만 입력." />
+  <meta property="og:url" content="https://yujinjeon888888.github.io/web-tools/annual-leave/" />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CJD94DVSKL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CJD94DVSKL');
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, "Malgun Gothic", sans-serif; background: #f4f5f7; color: #222; line-height: 1.6; padding: 16px; }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 12px 0 4px; text-align: center; }
+    .sub { color: #888; font-size: 13px; margin-bottom: 20px; text-align: center; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+    label:first-child { margin-top: 0; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; }
+    input:focus { outline: none; border-color: #4a7cff; }
+    .hint { font-size: 12px; color: #aaa; margin-top: 4px; }
+    button { width: 100%; padding: 15px; margin-top: 20px; font-size: 17px; font-weight: 700; color: #fff; background: #4a7cff; border: none; border-radius: 10px; cursor: pointer; }
+    button:active { background: #3a6cee; }
+    .result { display: none; }
+    .big { text-align: center; padding: 8px 0 16px; }
+    .big .label { font-size: 14px; color: #888; }
+    .big .amount { font-size: 30px; font-weight: 800; color: #4a7cff; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td { padding: 9px 0; border-bottom: 1px solid #f0f0f0; }
+    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .total td { font-weight: 700; border-bottom: none; padding-top: 12px; }
+    .note { font-size: 12px; color: #aaa; margin-top: 14px; }
+    .home { color:#888; text-decoration:none; font-size:13px; }
+    section { color:#555; font-size:14px; line-height:1.75; }
+    section h2 { font-size:18px; color:#222; margin:24px 0 8px; }
+    section ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p style="margin-bottom:8px"><a class="home" href="../">← 툴 모음 홈</a></p>
+    <h1>연차수당 계산기</h1>
+    <p class="sub">미사용 연차수당 자동 계산</p>
+
+    <!-- 카카오 애드핏 광고 -->
+    <div style="text-align:center;margin:0 0 16px">
+      <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-tmpthnakjXKM6v71"
+           data-ad-width="320"
+           data-ad-height="100"></ins>
+      <script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+    </div>
+
+    <div class="card">
+      <label>월 통상임금 (원)</label>
+      <input id="wage" type="number" inputmode="numeric" placeholder="예: 2500000" />
+      <div class="hint">기본급 + 고정수당 (세전 월급)</div>
+      <label>1일 소정근로시간</label>
+      <input id="hours" type="number" inputmode="decimal" value="8" />
+      <div class="hint">보통 8시간</div>
+      <label>미사용 연차 일수</label>
+      <input id="leaves" type="number" inputmode="decimal" placeholder="예: 5" />
+      <button onclick="calc()">연차수당 계산</button>
+    </div>
+
+    <div class="card result" id="result">
+      <div class="big">
+        <div class="label">연차수당 (세전)</div>
+        <div class="amount" id="pay">-</div>
+      </div>
+      <table>
+        <tr><td>통상시급</td><td id="hourly">-</td></tr>
+        <tr><td>1일 통상임금</td><td id="daily">-</td></tr>
+        <tr class="total"><td>미사용 연차</td><td id="cnt">-</td></tr>
+      </table>
+      <p class="note">※ 월 소정근로시간 209시간(주40시간) 기준 추정치입니다.</p>
+    </div>
+
+    <section>
+      <h2>연차수당이란?</h2>
+      <p>발생한 연차 유급휴가를 사용하지 않고 남겼을 때, 그 미사용 일수만큼 돈으로 받는 수당입니다. 퇴사 시 남은 연차나 연말 미사용 연차에 대해 지급됩니다.</p>
+      <h2>연차수당 계산 방법</h2>
+      <ul>
+        <li>통상시급 = 월 통상임금 ÷ 209시간</li>
+        <li>1일 통상임금 = 통상시급 × 1일 소정근로시간(보통 8시간)</li>
+        <li>연차수당 = 1일 통상임금 × 미사용 연차일수</li>
+      </ul>
+      <h2>자주 묻는 질문</h2>
+      <p><b>Q. 209시간은 뭔가요?</b><br>주 40시간 근무 기준 월 소정근로시간입니다. (40시간 + 주휴 8시간) × 4.345주 ≈ 209시간.</p>
+      <p><b>Q. 연차는 몇 개 생기나요?</b><br>1년 이상 근무 시 15일, 이후 2년마다 1일씩 늘어 최대 25일입니다.</p>
+    </section>
+  </div>
+
+<script>
+  const won = (n) => Math.round(n).toLocaleString("ko-KR") + "원";
+  function calc() {
+    const wage = parseFloat(document.getElementById("wage").value) || 0;
+    const hours = parseFloat(document.getElementById("hours").value) || 8;
+    const leaves = parseFloat(document.getElementById("leaves").value) || 0;
+    if (wage <= 0 || leaves <= 0) { alert("월 통상임금과 미사용 연차 일수를 입력해주세요."); return; }
+
+    const hourly = wage / 209;
+    const daily = hourly * hours;
+    const pay = daily * leaves;
+
+    document.getElementById("pay").textContent = won(pay);
+    document.getElementById("hourly").textContent = won(hourly);
+    document.getElementById("daily").textContent = won(daily);
+    document.getElementById("cnt").textContent = leaves + "일";
+    document.getElementById("result").style.display = "block";
+  }
+</script>
+</body>
+</html>
